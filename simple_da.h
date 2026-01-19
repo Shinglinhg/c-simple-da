@@ -60,7 +60,7 @@
 
 #define sda_get(array, index) ((array).items[(index)])
 #define sda_back(array) ((array).count > 0 ? (array).items[(array).count - 1] : 0)
-// WARNING: POP DOESN'T ZERO OUT THE VALUE AFTER POPPING
+// WARNING: POP DOESN'T ZERO OUT THE POPPED ELEMENT
 #define sda_pop(array) ((array).count > 0 ? (array).items[--(array).count] : 0)
 #define sda_free(array) do { SDA_FUNC_FREE((array).items); (array).items = NULL; (array).count = (array).capacity = 0; } while (0)
 

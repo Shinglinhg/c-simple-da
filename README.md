@@ -1,7 +1,7 @@
 # **C Simple Dynamic Array**
 ### A simple **single-header** dynamic array implementation for C.
 
-No linking or implementation guard is required just include the header and use it.
+No linking or implementation guard is required just include "simple_da.h" and use it.
 
 ## Example usage:
 ```c
