@@ -48,14 +48,14 @@
     size_t capacity; \
 }
 
-#define sda_push(array, val) do { \
+#define sda_push(array, ...) do { \
     if ((array).count >= (array).capacity) { \
         (array).capacity = (array).capacity ? (array).capacity * 2 : SDA_INITIAL_CAPACITY; \
         void *tmp = SDA_FUNC_REALLOC((array).items, (array).capacity * sizeof(*(array).items)); \
         if (!tmp) SDA_ON_OOM; \
         (array).items = tmp; \
     } \
-    (array).items[(array).count++] = (val); \
+    (array).items[(array).count++] = (__VA_ARGS__); \
 } while (0)
 
 #define sda_get(array, index) ((array).items[(index)])
