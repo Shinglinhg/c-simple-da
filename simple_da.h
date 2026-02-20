@@ -61,4 +61,10 @@
 #define sda_back(array) ((array).count > 0 ? (array).items[(array).count - 1] : 0)
 #define sda_free(array) do { SDA_FUNC_FREE((array).items); (array).items = NULL; (array).count = (array).capacity = 0; } while (0)
 
+#define sda_pop(array, out_ptr) \
+    do { \
+        if ((array).count > 0) \
+            *(out_ptr) = (array).items[--(array).count]; \
+    } while (0)
+
 #endif // SDA_H
