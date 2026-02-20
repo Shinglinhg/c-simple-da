@@ -5,17 +5,6 @@
 #ifndef SDA_H
 #define SDA_H
 
-// C++ Warning message
-#ifndef SDA_ALLOW_CPP
-#    ifdef __cplusplus
-#        if defined(_MSC_VER)
-#            pragma message("simple_da.h: This library is intended for C, not C++. If you REALLY want to use it, define a macro 'SDA_ALLOW_CPP' before including this file")
-#        else
-#            warning "simple_da.h: This library is intended for C, not C++. If you REALLY want to use it, define a macro 'SDA_ALLOW_CPP' before including this file"
-#        endif
-#    endif
-#endif
-
 #ifndef NO_STANDARD_LIBRARY
 #   include <stddef.h>
 #   include <stdlib.h>
@@ -58,10 +47,18 @@
     (array).items[(array).count++] = (__VA_ARGS__); \
 } while (0)
 
+#define sda_allocate(array) ({ \
+    if ((array).count >= (array).capacity) { \
+        (array).capacity = (array).capacity ? (array).capacity * 2 : SDA_INITIAL_CAPACITY; \
+        void *tmp = SDA_FUNC_REALLOC((array).items, (array).capacity * sizeof(*(array).items)); \
+        if (!tmp) SDA_ON_OOM; \
+        (array).items = tmp; \
+    } \
+    &(array).items[(array).count++]; \
+})
+
 #define sda_get(array, index) ((array).items[(index)])
 #define sda_back(array) ((array).count > 0 ? (array).items[(array).count - 1] : 0)
-// WARNING: POP DOESN'T ZERO OUT THE POPPED ELEMENT
-#define sda_pop(array) ((array).count > 0 ? (array).items[--(array).count] : 0)
 #define sda_free(array) do { SDA_FUNC_FREE((array).items); (array).items = NULL; (array).count = (array).capacity = 0; } while (0)
 
 #endif // SDA_H
