@@ -37,6 +37,8 @@
     size_t capacity; \
 }
 
+#define sda_init { 0 }
+
 #define sda_push(array, ...) do { \
     if ((array).count >= (array).capacity) { \
         (array).capacity = (array).capacity ? (array).capacity * 2 : SDA_INITIAL_CAPACITY; \
