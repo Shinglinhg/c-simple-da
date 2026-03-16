@@ -42,35 +42,42 @@
 #define sda_size(array) ((array)->count)
 
 #define sda_push(array, ...) do { \
-    if ((array).count >= (array).capacity) { \
-        (array).capacity = (array).capacity ? (array).capacity * 2 : SDA_INITIAL_CAPACITY; \
-        void *tmp = SDA_FUNC_REALLOC((array).items, (array).capacity * sizeof(*(array).items)); \
+    if ((array)->count >= (array)->capacity) { \
+        (array)->capacity = (array)->capacity ? (array)->capacity * 2 : SDA_INITIAL_CAPACITY; \
+        void *tmp = SDA_FUNC_REALLOC((array)->items, (array)->capacity * sizeof(*(array)->items)); \
         if (!tmp) SDA_ON_OOM; \
-        (array).items = tmp; \
+        (array)->items = tmp; \
     } \
-    (array).items[(array).count++] = (__VA_ARGS__); \
+    (array)->items[(array)->count++] = (__VA_ARGS__); \
 } while (0)
 
 #define sda_allocate(array) ({ \
-    if ((array).count >= (array).capacity) { \
-        (array).capacity = (array).capacity ? (array).capacity * 2 : SDA_INITIAL_CAPACITY; \
-        void *tmp = SDA_FUNC_REALLOC((array).items, (array).capacity * sizeof(*(array).items)); \
+    if ((array)->count >= (array)->capacity) { \
+        (array)->capacity = (array)->capacity ? (array)->capacity * 2 : SDA_INITIAL_CAPACITY; \
+        void *tmp = SDA_FUNC_REALLOC((array)->items, (array)->capacity * sizeof(*(array)->items)); \
         if (!tmp) SDA_ON_OOM; \
-        (array).items = tmp; \
+        (array)->items = tmp; \
     } \
-    &(array).items[(array).count++]; \
+    &(array)->items[(array)->count++]; \
 })
 
 
-#define sda_get_val(array, index) ((array).items[(index)])
-#define sda_get(array, index) (&(array).items[(index)])
-#define sda_back(array) ((array).count > 0 ? (array).items[(array).count - 1] : 0)
-#define sda_free(array) do { SDA_FUNC_FREE((array).items); (array).items = NULL; (array).count = (array).capacity = 0; } while (0)
+#define sda_get_val(array, index) ((array)->items[(index)])
+#define sda_get(array, index) (&(array)->items[(index)])
+#define sda_back_val(array) ((array)->count > 0 ? (array)->items[(array)->count - 1] : NULL)
+#define sda_back(array) ((array)->count > 0 ? &((array)->items[(array)->count - 1]) : NULL)
+
+#define sda_free(array) \
+    do { \
+        SDA_FUNC_FREE((array)->items); \
+        (array)->items = NULL; \
+        (array)->count = (array)->capacity = 0; \
+    } while (0)
 
 #define sda_pop(array, out_ptr) \
     do { \
-        if ((array).count > 0) \
-            *(out_ptr) = (array).items[--(array).count]; \
+        if ((array)->count > 0) \
+            *(out_ptr) = (array)->items[--(array)->count]; \
     } while (0)
 
 #endif // SDA_H
