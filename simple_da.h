@@ -37,8 +37,6 @@
     size_t capacity; \
 }
 
-#define sda_init { 0 }
-
 #define sda_size(array) ((array)->count)
 
 #define sda_push(array, ...) do { \
