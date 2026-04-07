@@ -1,6 +1,8 @@
 # **C Simple Dynamic Array**
 ### A simple **single-header** dynamic array implementation for C.
 
+credits: based on [this](https://www.youtube.com/watch?v=95M6V3mZgrI)
+
 No linking or implementation guard is required just include "simple_da.h" and use it.
 
 ## Example usage:
