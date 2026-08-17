@@ -2,36 +2,43 @@
 // Doesn't require STB style implementation nor linking, 
 // include this header wherever you need and start using it!
 
-#ifndef SDA_H
-#define SDA_H
+#ifndef SDA_H_
+#define SDA_H_
 
-#ifndef NO_STANDARD_LIBRARY
-#   include <stddef.h>
-#   include <stdlib.h>
+#ifndef NO_LIBC
+#include <stddef.h>
+#include <stdlib.h>
 #endif
 
-// Initial capacity of an empty array
 #ifndef SDA_INITIAL_CAPACITY
-#   define SDA_INITIAL_CAPACITY 8
+#define SDA_INITIAL_CAPACITY 8 // Initial capacity of an empty array
 #endif
 
-// Which realloc and free function should be used
-#ifndef SDA_FUNC_REALLOC
-#   define SDA_FUNC_REALLOC realloc
+#ifndef SDA_REALLOC
+#define SDA_REALLOC realloc
 #endif
-#ifndef SDA_FUNC_FREE
-#   define SDA_FUNC_FREE free
+#ifndef SDA_FREE
+#define SDA_FREE free
 #endif
 
-// What the library should do when out of memory for reallocations
+#ifndef SDA_EXIT_FAILURE
+#ifdef EXIT_FAILURE
+#define SDA_EXIT_FAILURE EXIT_FAILURE
+#else
+#define SDA_EXIT_FAILURE 1
+#endif
+#endif
+
+// What the library should do when out of memory for allocations
 #ifndef SDA_ON_OOM
-#   ifndef NO_STANDARD_LIBRARY
+#   ifndef NO_LIBC
 #       include <stdio.h>
 #   endif
-#   define SDA_ON_OOM do { fprintf(stderr, "Out of memory\n"); exit(EXIT_FAILURE); } while (0)
+#   define SDA_ON_OOM do { fprintf(stderr, "Out of memory\n"); exit(SDA_EXIT_FAILURE); } while (0)
 #endif
 
-#define dynamic_array(type) struct { \
+#define dynamic_array(type) \
+struct { \
     type *items; \
     size_t count; \
     size_t capacity; \
@@ -42,7 +49,7 @@
 #define sda_push(array, ...) do { \
     if ((array)->count >= (array)->capacity) { \
         (array)->capacity = (array)->capacity ? (array)->capacity * 2 : SDA_INITIAL_CAPACITY; \
-        void *tmp = SDA_FUNC_REALLOC((array)->items, (array)->capacity * sizeof(*(array)->items)); \
+        void *tmp = SDA_REALLOC((array)->items, (array)->capacity * sizeof(*(array)->items)); \
         if (!tmp) SDA_ON_OOM; \
         (array)->items = tmp; \
     } \
@@ -52,7 +59,7 @@
 #define sda_allocate(array) ({ \
     if ((array)->count >= (array)->capacity) { \
         (array)->capacity = (array)->capacity ? (array)->capacity * 2 : SDA_INITIAL_CAPACITY; \
-        void *tmp = SDA_FUNC_REALLOC((array)->items, (array)->capacity * sizeof(*(array)->items)); \
+        void *tmp = SDA_REALLOC((array)->items, (array)->capacity * sizeof(*(array)->items)); \
         if (!tmp) SDA_ON_OOM; \
         (array)->items = tmp; \
     } \
@@ -67,7 +74,7 @@
 
 #define sda_free(array) \
     do { \
-        SDA_FUNC_FREE((array)->items); \
+        SDA_FREE((array)->items); \
         (array)->items = NULL; \
         (array)->count = (array)->capacity = 0; \
     } while (0)
@@ -78,4 +85,4 @@
             *(out_ptr) = (array)->items[--(array)->count]; \
     } while (0)
 
-#endif // SDA_H
+#endif // SDA_H_
